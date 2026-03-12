@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>顶部导航栏</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    /* ── 顶部导航栏 ── */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #1a1a2e;
+      padding: 0 32px;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Logo / 品牌名 */
+    .navbar__brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #e0e0e0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .navbar__brand svg {
+      flex-shrink: 0;
+    }
+
+    /* 导航链接列表 */
+    .navbar__nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .navbar__nav a {
+      display: block;
+      padding: 8px 16px;
+      color: #b0bec5;
+      text-decoration: none;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .navbar__nav a:hover,
+    .navbar__nav a.active {
+      background-color: rgba(79, 195, 247, 0.15);
+      color: #4fc3f7;
+    }
+
+    /* 右侧操作按钮 */
+    .navbar__actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 7px 18px;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn--outline {
+      background: transparent;
+      border: 1.5px solid #4fc3f7;
+      color: #4fc3f7;
+    }
+
+    .btn--outline:hover {
+      background: rgba(79, 195, 247, 0.15);
+    }
+
+    .btn--primary {
+      background: #4fc3f7;
+      color: #1a1a2e;
+    }
+
+    .btn--primary:hover {
+      background: #29b6f6;
+    }
+
+    /* ── 汉堡菜单（移动端） ── */
+    .navbar__toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .navbar__toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #e0e0e0;
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* ── 响应式：小屏幕 ── */
+    @media (max-width: 768px) {
+      .navbar__toggle {
+        display: flex;
+      }
+
+      .navbar__nav,
+      .navbar__actions {
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        width: 100%;
+      }
+
+      .navbar__nav.open,
+      .navbar__actions.open {
+        display: flex;
+      }
+
+      .navbar {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 12px 20px;
+      }
+
+      .navbar__nav {
+        order: 3;
+        padding-bottom: 8px;
+      }
+
+      .navbar__actions {
+        order: 4;
+        padding-bottom: 12px;
+        flex-direction: row;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航栏 -->
+  <nav class="navbar" role="navigation" aria-label="主导航">
+    <!-- 品牌 Logo -->
+    <a href="#" class="navbar__brand">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      赛道
+    </a>
+
+    <!-- 汉堡按钮（移动端） -->
+    <button class="navbar__toggle" id="menuToggle" aria-label="展开菜单" aria-expanded="false" aria-controls="navMenu actionMenu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- 导航链接 -->
+    <ul class="navbar__nav" id="navMenu">
+      <li><a href="#" class="active">首页</a></li>
+      <li><a href="#">赛事</a></li>
+      <li><a href="#">排行榜</a></li>
+      <li><a href="#">关于我们</a></li>
+    </ul>
+
+    <!-- 操作按钮 -->
+    <div class="navbar__actions" id="actionMenu">
+      <button class="btn btn--outline">登录</button>
+      <button class="btn btn--primary">注册</button>
+    </div>
+  </nav>
+
+  <script>
+    // 移动端汉堡菜单切换
+    const toggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
+    const actionMenu = document.getElementById('actionMenu');
+
+    toggle.addEventListener('click', () => {
+      const isOpen = navMenu.classList.toggle('open');
+      actionMenu.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', isOpen);
+      toggle.setAttribute('aria-label', isOpen ? '收起菜单' : '展开菜单');
+    });
+  </script>
+
+</body>
+</html>
