@@ -6,7 +6,7 @@
   <title>RC遥控车赛道</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Noto+Sans+SC:wght@700;900&display=swap" rel="stylesheet" />
   <style>
     * {
       margin: 0;
@@ -14,53 +14,40 @@
       box-sizing: border-box;
     }
 
-    html, body {
+    html {
+      /* 全页滚动容器，强制整页吸附 */
       height: 100%;
-      font-family: "Space Grotesk", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Space Grotesk", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
       background-color: #111111;
       overflow-x: hidden;
     }
 
-    /* ── Hero 区域 ── */
-    .hero {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      min-height: 560px;
-      overflow: hidden;
-    }
-
-    /* 背景图 */
-    .hero__bg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-    }
-
-    /* 暗色遮罩，确保文字可读 */
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.38);
-    }
-
-    /* ── 导航栏包裹层（浮于 hero 顶部） ── */
+    /* ────────────────────────────────────────
+       固定导航栏（悬浮于所有 slide 之上）
+    ──────────────────────────────────────── */
     .navbar-wrapper {
-      position: absolute;
+      position: fixed;
       top: 20px;
       left: 0;
       right: 0;
-      z-index: 100;
+      z-index: 1000;
       padding: 0 20px;
       max-width: 560px;
       margin: 0 auto;
+      pointer-events: none; /* 让背后的 slide 可响应鼠标滚轮 */
     }
 
-    /* 红色小圆点指示器 */
+    .navbar-wrapper > * {
+      pointer-events: auto;
+    }
+
+    /* 红色小圆点 */
     .navbar-wrapper::after {
       content: "";
       display: block;
@@ -70,9 +57,9 @@
       background-color: #e8002d;
       margin-top: 6px;
       margin-left: 4px;
+      pointer-events: none;
     }
 
-    /* ── 顶部导航栏主体 ── */
     .navbar {
       display: flex;
       align-items: center;
@@ -84,7 +71,6 @@
       height: 52px;
     }
 
-    /* ── Logo ── */
     .navbar__brand {
       text-decoration: none;
       color: #111111;
@@ -96,7 +82,6 @@
       flex-shrink: 0;
     }
 
-    /* ── 导航链接列表 ── */
     .navbar__nav {
       display: flex;
       align-items: center;
@@ -119,7 +104,6 @@
       background-color: #f0f0f0;
     }
 
-    /* ── 汉堡菜单按钮 ── */
     .navbar__toggle {
       display: flex;
       flex-direction: column;
@@ -140,7 +124,6 @@
       border-radius: 2px;
     }
 
-    /* ── 下拉菜单 ── */
     .navbar__dropdown {
       display: none;
       flex-direction: column;
@@ -173,25 +156,59 @@
       background-color: #f5f5f5;
     }
 
-    /* ── Hero 标题文字（左下角） ── */
-    .hero__headline {
+    /* ────────────────────────────────────────
+       公共 slide 样式
+    ──────────────────────────────────────── */
+    .slide {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 560px;
+      overflow: hidden;
+      /* 每个 slide 整页吸附 */
+      scroll-snap-align: start;
+    }
+
+    .slide__bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* 暗色遮罩 */
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.42);
+      pointer-events: none;
+    }
+
+    /* ────────────────────────────────────────
+       Slide 1：RC 赛道
+    ──────────────────────────────────────── */
+    .slide-1__headline {
       position: absolute;
       bottom: 60px;
       left: 52px;
       z-index: 10;
       color: #ffffff;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
       font-size: clamp(3rem, 7vw, 6rem);
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1.08;
-      letter-spacing: -2px;
+      letter-spacing: -1px;
     }
 
-    .hero__headline span {
+    .slide-1__headline span {
       display: block;
     }
 
-    /* ── 底部红点滚动指示器（右下角） ── */
-    .hero__scroll-dot {
+    /* 红点（右下角，提示可向下滚动） */
+    .slide-1__scroll-dot {
       position: absolute;
       bottom: 52px;
       right: 52px;
@@ -200,49 +217,103 @@
       height: 18px;
       border-radius: 50%;
       background-color: #e8002d;
+      animation: bounce 1.8s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* ────────────────────────────────────────
+       Slide 2：Built to think. Born to haul.
+    ──────────────────────────────────────── */
+    .slide-2 {
+      background-color: #0d0d0d;
+    }
+
+    /* 大标题（左上方，与参考图一致） */
+    .slide-2__headline {
+      position: absolute;
+      top: 120px;
+      left: 52px;
+      right: 52px;
+      z-index: 10;
+      color: #ffffff;
+      font-size: clamp(3.5rem, 8.5vw, 7.5rem);
+      font-weight: 800;
+      line-height: 1.04;
+      letter-spacing: -3px;
+    }
+
+    .slide-2__headline span {
+      display: block;
+    }
+
+    /* 副标题（左下角） */
+    .slide-2__subtitle {
+      position: absolute;
+      bottom: 60px;
+      left: 52px;
+      z-index: 10;
+      color: #ffffff;
+      font-size: clamp(1rem, 1.6vw, 1.25rem);
+      font-weight: 700;
+      line-height: 1.5;
+      max-width: 380px;
     }
   </style>
 </head>
 <body>
 
-  <section class="hero">
-    <!-- 背景图：RC遥控车赛道 -->
+  <!-- ── 固定导航栏（跨 slide 持久显示） ── -->
+  <div class="navbar-wrapper">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <a href="#" class="navbar__brand">waabi</a>
+
+      <ul class="navbar__nav">
+        <li><a href="#">Home</a></li>
+      </ul>
+
+      <button class="navbar__toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="dropdown">
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+
+    <div class="navbar__dropdown" id="dropdown" role="menu">
+      <a href="#" role="menuitem">Events</a>
+      <a href="#" role="menuitem">Leaderboard</a>
+      <a href="#" role="menuitem">About Us</a>
+    </div>
+  </div>
+
+  <!-- ── Slide 1：RC 遥控车赛道 ── -->
+  <section class="slide slide-1" id="slide-1">
     <img
-      class="hero__bg"
+      class="slide__bg"
       src="https://github.com/user-attachments/assets/d5ecf10a-6a8a-4f09-8d6c-2daf80354f22"
       alt="RC遥控车赛道·随心拼装"
     />
 
-    <!-- 顶部导航栏 -->
-    <div class="navbar-wrapper">
-      <nav class="navbar" role="navigation" aria-label="Main navigation">
-        <a href="#" class="navbar__brand">waabi</a>
-
-        <ul class="navbar__nav">
-          <li><a href="#">Home</a></li>
-        </ul>
-
-        <button class="navbar__toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="dropdown">
-          <span></span>
-          <span></span>
-        </button>
-      </nav>
-
-      <div class="navbar__dropdown" id="dropdown" role="menu">
-        <a href="#" role="menuitem">Events</a>
-        <a href="#" role="menuitem">Leaderboard</a>
-        <a href="#" role="menuitem">About Us</a>
-      </div>
-    </div>
-
-    <!-- Hero 标题 -->
-    <h1 class="hero__headline">
+    <h1 class="slide-1__headline">
       <span>RC遥控车赛道·</span>
       <span>随心拼装。</span>
     </h1>
 
-    <!-- 红点滚动指示器 -->
-    <div class="hero__scroll-dot" aria-hidden="true"></div>
+    <div class="slide-1__scroll-dot" aria-hidden="true"></div>
+  </section>
+
+  <!-- ── Slide 2：Built to think. Born to haul. ── -->
+  <section class="slide slide-2" id="slide-2">
+    <h2 class="slide-2__headline">
+      <span>Built to think.</span>
+      <span>Born to haul.</span>
+    </h2>
+
+    <p class="slide-2__subtitle">
+      Waabi is pioneering the<br />future of Physical AI.
+    </p>
   </section>
 
   <script>
